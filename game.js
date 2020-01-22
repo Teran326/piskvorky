@@ -7,7 +7,7 @@ function clearCanvas(color = 'white'){
 }
 //vykreslení hracího pole
 let field = {
-    square: 20,
+    square: 50,
     paint: function(){
         for(let i = 1; i <= this.square; i++){
             ctx.beginPath();
@@ -74,7 +74,7 @@ let game = {
                             ctx.lineTo(i * (canvas.width / field.square), (j + 1) * (canvas.height / field.square));
                             ctx.stroke();
                             //vyčištění canvasu pro výhru křížku
-                            if(ending.endingX()){
+                            if(ending.ending()){
                                 repaint.repaintX();
                                 document.getElementById('player').innerHTML = 'Hra skončila. Prosím obnovte stránku.';
                             }
@@ -101,7 +101,7 @@ let game = {
                             ctx.arc((i + 1) * ((canvas.width / field.square) / 2) + (i * ((canvas.width / field.square)) / 2), (j + 1) * ((canvas.height / field.square) / 2) + (j * ((canvas.height / field.square)) / 2), (canvas.width / field.square) / 2 - 2, 0, 2 * Math.PI);
                             ctx.stroke();
                             //vyčištění canvasu pro výhru kolečka
-                            if(ending.endingO()){
+                            if(ending.ending()){
                                 repaint.repaintO();
                                 document.getElementById('player').innerHTML = 'Hra skončila. Prosím obnovte stránku.';
                             }
@@ -113,49 +113,77 @@ let game = {
         })
     }
 }
+//kontrola výhry
 let ending = {
-    //kontrola výhry křížku
-    endingX: function(){
+    ending: function(){
         for(let i = 0; i < field.square; i++){
             for(let j = 0; j < field.square; j++){
-                //vertikální zjištění výhry křížku
-                if((mapping[i][j] == 'x') && (mapping[i][j + 1] == 'x') && (mapping[i][j + 2] == 'x') && (mapping[i][j + 3] == 'x') && (mapping[i][j + 4] == 'x')){
-                    return true;
+                //výhra po 5 znacích
+                if(field.square >= 10){
+                    //vertikální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i][j + 1] == 'x') && (mapping[i][j + 2] == 'x') && (mapping[i][j + 3] == 'x') && (mapping[i][j + 4] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i][j + 1] == 'o') && (mapping[i][j + 2] == 'o') && (mapping[i][j + 3] == 'o') && (mapping[i][j + 4] == 'o'))){
+                        return true;
+                    }
+                    //horizontální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j] == 'x') && (mapping[i + 2][j] == 'x') && (mapping[i + 3][j] == 'x') && (mapping[i + 4][j] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j] == 'o') && (mapping[i + 2][j] == 'o') && (mapping[i + 3][j] == 'o') && (mapping[i + 4][j] == 'o'))){
+                        return true;
+                    }
+                    //pravé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j - 1] == 'x') && (mapping[i + 2][j - 2] == 'x') && (mapping[i + 3][j - 3] == 'x') && (mapping[i + 4][j - 4] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j - 1] == 'o') && (mapping[i + 2][j - 2] == 'o') && (mapping[i + 3][j - 3] == 'o') && (mapping[i + 4][j - 4] == 'o'))){
+                        return true;
+                    }
+                    //levé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j + 1] == 'x') && (mapping[i + 2][j + 2] == 'x') && (mapping[i + 3][j + 3] == 'x') && (mapping[i + 4][j + 4] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j + 1] == 'o') && (mapping[i + 2][j + 2] == 'o') && (mapping[i + 3][j + 3] == 'o') && (mapping[i + 4][j + 4] == 'o'))){
+                        return true;
+                    }
                 }
-                //horizontální zjištění výhry křížku
-                if((mapping[i][j] == 'x') && (mapping[i + 1][j] == 'x') && (mapping[i + 2][j] == 'x') && (mapping[i + 3][j] == 'x') && (mapping[i + 4][j] == 'x')){
-                    return true;
+                //výhra po čtyřech znacích
+                else if(field.square > 3 && field.square < 10) {
+                    if(((mapping[i][j] == 'x') && (mapping[i][j + 1] == 'x') && (mapping[i][j + 2] == 'x') && (mapping[i][j + 3] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i][j + 1] == 'o') && (mapping[i][j + 2] == 'o') && (mapping[i][j + 3] == 'o'))){
+                        return true;
+                    }
+                    //horizontální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j] == 'x') && (mapping[i + 2][j] == 'x') && (mapping[i + 3][j] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j] == 'o') && (mapping[i + 2][j] == 'o') && (mapping[i + 3][j] == 'o'))){
+                        return true;
+                    }
+                    //pravé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j - 1] == 'x') && (mapping[i + 2][j - 2] == 'x') && (mapping[i + 3][j - 3] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j - 1] == 'o') && (mapping[i + 2][j - 2] == 'o') && (mapping[i + 3][j - 3] == 'o'))){
+                        return true;
+                    }
+                    //levé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j + 1] == 'x') && (mapping[i + 2][j + 2] == 'x') && (mapping[i + 3][j + 3] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j + 1] == 'o') && (mapping[i + 2][j + 2] == 'o') && (mapping[i + 3][j + 3] == 'o'))){
+                        return true;
+                    }
                 }
-                //pravé diagonální zjištění vyhry křížku
-                if((mapping[i][j] == 'x') && (mapping[i + 1][j - 1] == 'x') && (mapping[i + 2][j - 2] == 'x') && (mapping[i + 3][j - 3] == 'x') && (mapping[i + 4][j - 4] == 'x')){
-                    return true;
-                }
-                //levé diagonální zjištění vyhry křížku
-                if((mapping[i][j] == 'x') && (mapping[i + 1][j + 1] == 'x') && (mapping[i + 2][j + 2] == 'x') && (mapping[i + 3][j + 3] == 'x') && (mapping[i + 4][j + 4] == 'x')){
-                    return true;
-                }
-            }
-        }
-    },
-    //kontrola výhry kolečka
-    endingO: function(){
-        for(let i = 0; i < field.square; i++){
-            for(let j = 0; j < field.square; j++){
-                //vertikální zjištění výhry kolečka
-                if((mapping[i][j] == 'o') && (mapping[i][j + 1] == 'o') && (mapping[i][j + 2] == 'o') && (mapping[i][j + 3] == 'o') && (mapping[i][j + 4] == 'o')){
-                    return true;
-                }
-                //horizontální zjištění výhry kolečka
-                if((mapping[i][j] == 'o') && (mapping[i + 1][j] == 'o') && (mapping[i + 2][j] == 'o') && (mapping[i + 3][j] == 'o') && (mapping[i + 4][j] == 'o')){
-                    return true;
-                }
-                //pravé diagonální zjištění vyhry kolečka
-                if((mapping[i][j] == 'o') && (mapping[i + 1][j - 1] == 'o') && (mapping[i + 2][j - 2] == 'o') && (mapping[i + 3][j - 3] == 'o') && (mapping[i + 4][j - 4] == 'o')){
-                    return true;
-                }
-                //levé diagonální zjištění vyhry kolečka
-                if((mapping[i][j] == 'o') && (mapping[i + 1][j + 1] == 'o') && (mapping[i + 2][j + 2] == 'o') && (mapping[i + 3][j + 3] == 'o') && (mapping[i + 4][j + 4] == 'o')){
-                    return true;
+                //výhra po třech znacích
+                else{
+                    if(((mapping[i][j] == 'x') && (mapping[i][j + 1] == 'x') && (mapping[i][j + 2] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i][j + 1] == 'o') && (mapping[i][j + 2] == 'o'))){
+                        return true;
+                    }
+                    //horizontální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j] == 'x') && (mapping[i + 2][j] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j] == 'o') && (mapping[i + 2][j] == 'o'))){
+                        return true;
+                    }
+                    //pravé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j - 1] == 'x') && (mapping[i + 2][j - 2] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j - 1] == 'o') && (mapping[i + 2][j - 2] == 'o'))){
+                        return true;
+                    }
+                    //levé diagonální zjištění výhry
+                    if(((mapping[i][j] == 'x') && (mapping[i + 1][j + 1] == 'x') && (mapping[i + 2][j + 2] == 'x'))
+                        || ((mapping[i][j] == 'o') && (mapping[i + 1][j + 1] == 'o') && (mapping[i + 2][j + 2] == 'o'))){
+                        return true;
+                    }
                 }
             }
         }
@@ -180,6 +208,16 @@ let repaint = {
         mapping = '';
     }
 }
-field.paint();
-game.initX();
-game.initO();
+function squares(){
+    if (document.getElementById('number').value > 3 && document.getElementById('number').value <= 50) {
+        field.square = document.getElementById('number').value;
+    }
+    else{
+        field.square = 3;
+    }
+    document.getElementById('button').disabled = true;
+    clearCanvas();
+    field.paint();
+    game.initX();
+    game.initO();
+}
